@@ -58,8 +58,8 @@ class Station extends Command
 
         for ($i = 0; $i < $len - 1; $i += 5) {
             $data = [
-                '12306_id'     => $fileContent[$i],
-                '12306_code'   => $fileContent[$i + 2],
+                'id_12306'     => $fileContent[$i],
+                'code_12306'   => $fileContent[$i + 2],
                 'pinyin'       => $fileContent[$i + 3],
                 'pinyin_short' => $fileContent[$i + 4],
                 'name'         => $fileContent[$i + 1],
@@ -81,7 +81,6 @@ class Station extends Command
             $locationUri = "http://api.map.baidu.com/place/v2/suggestion?" .
                 "query={$data['name']}站" .
                 "&region=%E5%85%A8%E5%9B%BD&output=json&ak={$this->ak}";
-            // $locationStr = file_get_contents($locationUri);
             $client = new Client();
             $response = $client->request('GET', $locationUri);
 

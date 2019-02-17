@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Line;
 use Illuminate\Console\Command;
 
 class TrainList extends Command
@@ -50,6 +51,19 @@ class TrainList extends Command
             foreach ($all as $prefix => $list) {
                 foreach ($list as $item) {
                     $this->output->writeln($item->station_train_code);
+                    preg_match('/^(\w*)\((.*)-(.*)\)$/', $item->station_train_code, $match);
+                    if (count($match) != 4) {
+                        dd($match);
+                    }
+                    $data = [
+                        'train_class'        => $prefix,
+                        'train_code'         => $match[1],
+                        'start_station_name' => $match[2],
+                        'end_station_name'   => $match[3],
+                        'train_no'           => $item->train_no,
+                        // 'date'               => $date,
+                    ];
+                    $line = Line::firstOrCreate($data);
                 }
             }
         }

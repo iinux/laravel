@@ -15,8 +15,8 @@ class Stop extends Migration
     {
         Schema::create('stops', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('12306_id', 16);
-            $table->string('12306_code', 16);
+            $table->string('id_12306', 16);
+            $table->string('code_12306', 16);
             $table->string('pinyin', 32);
             $table->string('pinyin_short', 16);
             $table->string('name', 32);

@@ -15,12 +15,12 @@ class Line extends Migration
     {
         Schema::create('lines', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('train_class_name', 8);
-            $table->string('station_train_code', 8);
+            $table->string('train_class', 8);
+            $table->string('train_code', 8);
             $table->string('start_station_name', 32);
             $table->string('end_station_name', 32);
             $table->string('train_no', 32);
-            $table->string('date', 16);
+            $table->string('date', 16)->nullable();
             $table->timestamps();
         });
     }

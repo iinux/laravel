@@ -15,6 +15,7 @@ class Checkpoint extends Migration
     {
         Schema::create('checkpoints', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('line_id');
             $table->integer('stop_id');
             $table->string('arrive_time', 8);
             $table->string('start_time', 8);
