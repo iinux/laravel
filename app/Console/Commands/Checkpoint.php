@@ -6,6 +6,7 @@ use App\Models\Line;
 use App\Models\Stop;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
+use App\Models\Checkpoint as CheckpointModel;
 
 class Checkpoint extends Command
 {
@@ -51,13 +52,28 @@ class Checkpoint extends Command
                 $this->output->writeln("processing {$line->train_code} {$line->start_station_name} -> {$line->end_station_name}");
                 $fromStop = Stop::where('name', $line->start_station_name)->firstOrFail();
                 $endStop = Stop::where('name', $line->end_station_name)->firstOrFail();
-                $uri = "https://kyfw.12306.cn/otn/czxx/queryByTrainNo?".
+                $uri = "https://kyfw.12306.cn/otn/czxx/queryByTrainNo?" .
                     "train_no={$line->train_no}&from_station_telecode={$fromStop->code_12306}&to_station_telecode={$endStop->code_12306}&depart_date=$date";
                 $client = new Client();
                 $response = $client->request('GET', $uri);
-                dd($response->getBody());
-                $fileContent = json_decode($fileContent);
-                dd($fileContent);
+                $fileContent = json_decode($response->getBody()->getContents());
+
+                foreach ($fileContent->data->data as $item) {
+                    dump($item->station_name);
+                    $stop = Stop::where('name', $item->station_name)->firstOrFail();
+
+                    $data = [
+                        'line_id'       => $line->id,
+                        'stop_id'       => $stop->id,
+                        'arrive_time'   => $item->arrive_time,
+                        'start_time'    => $item->start_time,
+                        'stopover_time' => $item->stopover_time,
+
+                    ];
+                    
+                    CheckpointModel::create($data);
+                }
+
                 return;
             }
 
