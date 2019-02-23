@@ -72,7 +72,7 @@ class Station extends Command
             ];
             $data['name'] = str_replace(' ','', $data['name']);
 
-            $stop = Stop::where('12306_code', $data['12306_code'])->first();
+            $stop = Stop::where('code_12306', $data['code_12306'])->first();
             if ($stop) {
                 $this->output->writeln("{$stop->province} {$stop->city} {$stop->name} skip");
                 continue;
