@@ -40,9 +40,14 @@ class Ch extends Command
      */
     public function handle()
     {
-        $from = '邯郸';
-        $to = '厦门';
-        $date = '2020-01-20';
+        $hd = '邯郸';
+        $xm = '厦门';
+        $this->handleFun($hd, $xm, '2020-01-20');
+        $this->handleFun($xm, $hd, '2020-02-02');
+    }
+
+    public function handleFun($from, $to, $date)
+    {
 
         $uri = 'https://flights.ch.com/Flights/MinPriceTrends';
         $client = new Client();
