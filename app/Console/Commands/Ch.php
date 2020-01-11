@@ -2,9 +2,11 @@
 
 namespace App\Console\Commands;
 
+use Exception;
 use GuzzleHttp\Client;
 use App\Models\ChPrice;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Mail;
 
 class Ch extends Command
 {
@@ -86,6 +88,7 @@ class Ch extends Command
                     ]);
                 }
 
+                // $trend->Price = 1511;
                 if ($trend->Price != $priceModel->price) {
                     $priceModel->status = ChPrice::STATUS_HISTORY;
                     $priceModel->save();
@@ -97,11 +100,36 @@ class Ch extends Command
                         'price'     => $trend->Price,
                         'heartbeat' => $now,
                     ]);
+
+                    $text = "{$priceModel->price}=>{$trend->Price}";
+                    $this->mail($text, $trend->Date);
                 } else {
                     $priceModel->heartbeat = $now;
                     $priceModel->save();
                 }
-                $this->output->writeln(" $nowFormat {$trend->Date} {$trend->Price}");
+                $text = "$nowFormat {$trend->Date} {$priceModel->price} {$trend->Price}";
+                $this->output->writeln($text);
+            }
+        }
+    }
+
+    public function mail($text, $title = 'laravel', $retry = 2)
+    {
+        $this->output->writeln("mail $title $text");
+        while ($retry >= 0) {
+            try {
+                $to = 'iinux@139.com';
+                // Mail::send()的返回值为空，所以可以其他方法进行判断
+                Mail::send('emails.test', ['text' => $text], function ($message) use ($title, $to) {
+                    $message->to($to)->subject($title);
+                });
+                // 返回的一个错误数组，利用此可以判断是否发送成功
+                dump(Mail::failures());
+                break;
+            } catch (Exception $e) {
+                dump($e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine());
+                $retry--;
+                sleep(6);
             }
         }
     }
