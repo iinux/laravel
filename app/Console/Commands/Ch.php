@@ -48,6 +48,10 @@ class Ch extends Command
 
     public function handleFun($from, $to, $date)
     {
+        $threeDay = date("Y-m-d", strtotime("+3 days"));
+        if ($threeDay > $date) {
+            $date = $threeDay;
+        }
 
         $uri = 'https://flights.ch.com/Flights/MinPriceTrends';
         $client = new Client();
